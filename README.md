@@ -1,12 +1,18 @@
 # DocConvert
 
-Free DOCX <-> PDF converter built with Next.js. Conversion runs through
-headless LibreOffice on the server; there is no third-party API dependency.
+Free DOCX <-> PDF converter built with Next.js. DOCX -> PDF runs through
+headless LibreOffice; PDF -> DOCX runs through the Python `pdf2docx`
+library (LibreOffice's headless PDF import is unreliable for
+styled/multi-column layouts like resumes). No third-party API dependency.
 
 ## Local development
 
-Requires Node 20+ and a local LibreOffice install (the `soffice` binary must
-be on your PATH) to actually exercise conversions.
+Requires Node 20+. To actually exercise conversions you also need:
+
+- A local LibreOffice install (the `soffice` binary on your PATH) for
+  DOCX -> PDF.
+- Python 3 with `pdf2docx` installed (`pip install pdf2docx`) for
+  PDF -> DOCX.
 
 ```bash
 npm install
@@ -17,6 +23,8 @@ Open http://localhost:3000.
 
 If `soffice` isn't on your PATH, set `SOFFICE_BIN` to the full path of the
 binary (e.g. on Windows: `C:\Program Files\LibreOffice\program\soffice.exe`).
+If `python3` isn't on your PATH (common on Windows, where it's just
+`python`), set `PYTHON_BIN` accordingly.
 
 ## Running with Docker (recommended way to test conversion locally)
 
@@ -37,6 +45,8 @@ Open http://localhost:3000.
   your real domain in production, e.g. `https://docconvert.example.com`.
 - `SOFFICE_BIN` — path to the `soffice` executable. Defaults to `soffice`
   (works inside the provided Docker image).
+- `PYTHON_BIN` — path to the Python executable used for PDF -> DOCX.
+  Defaults to `python3` (works inside the provided Docker image).
 
 ## Deploying to Railway
 
