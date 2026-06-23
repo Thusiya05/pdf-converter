@@ -28,6 +28,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
   },
+  verification: {
+    google: "vFyfeFEstbBjVP-Z1KtDCMrERMKZMYMlOE6pWew5Msg",
+  },
 };
 
 const jsonLd = {
