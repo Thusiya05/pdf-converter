@@ -5,6 +5,13 @@ import path from "node:path";
 import { conversionQueue } from "./queue";
 import type { Direction } from "./validate";
 
+// By default, headless soffice imports .pdf input through the generic
+// Draw-based PDF filter, which can't export to a Writer format like docx
+// (the conversion silently produces no output, even though soffice exits
+// cleanly). Forcing the Writer-specific PDF import filter is required to
+// get an actual editable Word document back out.
+const PDF_TO_WRITER_INFILTER = "writer_pdf_import";
+
 const CONVERT_TIMEOUT_MS = 60_000;
 const SOFFICE_BIN = process.env.SOFFICE_BIN || "soffice";
 
@@ -21,20 +28,25 @@ function toFileUri(absolutePath: string): string {
 function runSoffice(
   inputPath: string,
   outDir: string,
+  direction: Direction,
   targetExt: string,
   profileDir: string
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const args = [
-      "--headless",
-      "--norestore",
+    const args = ["--headless", "--norestore"];
+
+    if (direction === "pdf2docx") {
+      args.push(`--infilter=${PDF_TO_WRITER_INFILTER}`);
+    }
+
+    args.push(
       "--convert-to",
       targetExt,
       "--outdir",
       outDir,
       `-env:UserInstallation=${toFileUri(profileDir)}`,
-      inputPath,
-    ];
+      inputPath
+    );
 
     const child = execFile(
       SOFFICE_BIN,
@@ -78,7 +90,7 @@ export async function convertFile(
     await writeFile(inputPath, buffer);
 
     await conversionQueue.add(() =>
-      runSoffice(inputPath, workDir, targetExt, profileDir)
+      runSoffice(inputPath, workDir, direction, targetExt, profileDir)
     );
 
     const outputStat = await stat(outputPath).catch(() => null);
