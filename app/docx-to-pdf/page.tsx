@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Converter from "@/components/Converter";
 
+// See app/sitemap.ts for why this needs to be forced dynamic.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Convert DOCX to PDF Online Free | No Sign-up Required",
   description:

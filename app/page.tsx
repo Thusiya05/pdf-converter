@@ -1,6 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
+// Resolving the canonical/OG URLs below requires metadataBase (SITE_URL),
+// which is only correct at actual runtime, not Docker build time -- see
+// app/sitemap.ts for details. Force this page dynamic so it's not baked in.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Free DOCX to PDF and PDF to DOCX Converter Online",
   description:
